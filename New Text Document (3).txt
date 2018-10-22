@@ -1,0 +1,80 @@
+import cv2
+import numpy
+import numpy as np
+from PIL import Image
+
+#getting the grabbed knee
+img1 = cv2.imread(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\IMG_0006.jpg')
+img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+mask = np.zeros(img1.shape[:2], np.uint8)
+
+bgdModel = np.zeros((1,65), np.float64)
+fgdModel = np.zeros((1,65), np.float64)
+
+rect = (100, 120, 360, 640)
+cv2.grabCut (img1, mask, rect, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_RECT)
+
+mask2 = np.where((mask==2) | (mask==0), 0, 1).astype('uint8')
+img1 = img1*mask2[:,:,np.newaxis]
+img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+cv2.imshow(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\grab_cut.jpg',img1)
+cv2.imwrite(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\grab_cut.jpg', img1)
+
+##Test pixel count.
+BLACK = (0, 0, 0)
+img_file = Image.open(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\grab_cut.jpg')
+img = img_file.load() #grab-cut image
+[xs, ys] = img_file.size
+print (xs, ys)
+
+count = 0
+for x in range(0, (xs), 1):
+    for y in range(0, (ys), 1):
+        if img[x, y] == BLACK:
+            count = count
+        else:
+            count += 1
+print (img[1,1])
+print (count)
+
+##Get temperature.
+#Image processing
+#img_file = Image.open(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\grab_cut.jpg')
+#img = img_file.load() #grab-cut image
+#knee = cv2.imread(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\IMG_0006.jpg')
+#crop = knee[0:640, 0:1] #to get scale
+#cv2.imwrite(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\scale.jpg', crop)
+#scale_file = Image.open(r'C:\Users\ASUS1\Desktop\Mini Project\New folder\scale.jpg')
+#scale = scale_file.load() #scale
+
+#[xs, ys] = img_file.size
+#[xs2, ys2] = scale_file.size
+#print (xs, ys)
+#print (xs2, ys2)
+
+#np.set_printoptions(threshold=np.inf)
+
+#max_temperature = 38
+#min_temperature = 27
+#increment = ((max_temperature - min_temperature) / ys2)
+#result_file = np.zeros([xs, ys])
+#print ('hello again')
+#[print(*line) for line in arr_img]
+#Step 5: Loop the program.
+#for x in range(0, (xs), 1):
+#    for y in range(0, (ys), 1):
+#        for y2 in range(0, (ys2), 1):
+#            red_img, green_img, blue_img = img[x,y]
+#           
+#            red_scale, green_scale, blue_scale = scale[0,y2]
+#            #Step 6: Compare the RGB value and store values in empty array
+#            if img[x, y] and scale[0, y2]:
+#                    value = (38 - (y2 * increment))
+#                    result_file[x, y] = value
+#            elif int(abs(red_img - red_scale)) <= 20 and int(abs(green_img - green_scale)) <= 20 and int(abs(blue_img - blue_scale)) <= 20:
+#                value = (38 - (y2 * increment))
+#                result_file[x, y] = value   
+#            else:
+#                result_file[x, y] = 1
+#print (result_file)
+#print ('end')
